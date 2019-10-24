@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { withAuth } from '../../Context/AuthContext';
 
 class Signup extends Component {
 
@@ -11,6 +12,15 @@ class Signup extends Component {
   handleChange = (event) => {  
     const {name, value} = event.target;
     this.setState({[name]: value});
+  }
+
+  handleFormSubmit = (e) => {
+    e.preventDefault();
+    const { username, password } = this.state;
+    this.props.handleSignup({
+      username,
+      password
+    })
   }
 
   render() {
@@ -34,4 +44,4 @@ class Signup extends Component {
   }
 }
 
-export default Signup;
+export default withAuth(Signup);
