@@ -1,0 +1,101 @@
+.background-filler {
+  background-color: #ffd800;
+}
+
+.main-image-div {
+  background-color: #ffd800;
+  background: url('/main-image.jpg');
+  background-size: cover;
+  height: 500px;
+  border-radius: 0 0 50% 50%/0 0 20% 3%;
+}
+
+.main-sentence-div {
+  background-color: #ffd800;
+  color: #000;
+  font-size: 1.4em;
+}
+
+.main-sentence-div h1 {
+  margin-right: 10%;
+  text-align: right;
+  text-shadow: 1px 1px 0 grey, 1px 2px 0 grey, 1px 3px 0 grey;
+}
+
+.main-button-div {
+  text-align: center;
+  background-color: #ffd800;
+  height: 300px;
+}
+
+.btn {
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 4px;
+  padding: 0 16px;
+  min-width: 75%;
+  height: 45px;
+  vertical-align: middle;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  color: white;
+  background-color: #000;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  font-size: 14px;
+  font-weight: bolder;
+  line-height: 36px;
+  overflow: hidden;
+  outline: none;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.btn::-moz-focus-inner {
+  border: none;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.btn::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  padding: 50%;
+  background-color: white;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(1);
+  transition: opacity 1s, transform 0.5s;
+}
+.btn:hover,
+.btn:focus {
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+.btn:hover::before {
+  opacity: 0.08;
+}
+.btn:focus::before {
+  opacity: 0.24;
+}
+.btn:hover:focus::before {
+  opacity: 0.3;
+}
+.btn:active {
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+.btn:active::after {
+  opacity: 0.32;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0s;
+}
