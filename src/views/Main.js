@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MapGL, { NavigationControl } from 'react-map-gl';
+import MapGL, { NavigationControl, GeolocateControl } from 'react-map-gl';
 
 const TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -9,6 +9,12 @@ const navStyle = {
   left: 0,
   padding: '10px'
 };
+
+const locStyle = {
+  position: 'absolute',
+  bottom: '10%',
+  right: '2%',
+}
 
 class Map extends Component {
   constructor(props) {
@@ -20,11 +26,19 @@ class Map extends Component {
         zoom: 12,
         bearing: 0,
         pitch: 0,
-        width: 500,
+        width: '100%',
         height: 500,
-      }
+      },
+      mounted: false,
     };
   }
+
+  componentDidMount() {
+    this.setState({mounted: true})
+  }
+  
+
+  _onViewportChange = viewport => this.state.mounted && this.setState({viewport});
 
   render() {
     const { viewport } = this.state;
@@ -32,10 +46,16 @@ class Map extends Component {
       <MapGL
         {...viewport}
         mapStyle="mapbox://styles/mapbox/dark-v9"
-        mapboxApiAccessToken={TOKEN}>
+        mapboxApiAccessToken={TOKEN}
+        onViewportChange={this._onViewportChange}>
         <div className="nav" style={navStyle}>
           <NavigationControl/>
         </div>
+        <GeolocateControl
+          style={locStyle}
+          positionOptions={{enableHighAccuracy: true}}
+          trackUserLocation={true}
+        />
       </MapGL>
     );
   }
