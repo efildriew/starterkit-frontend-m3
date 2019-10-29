@@ -10,19 +10,21 @@ import PrivateRoute from './components/PrivateRoute';
 import AnonRoute from './components/AnonRoute';
 
 import Home from './views/Home';
+import Main from './views/Main';
 
 class App extends Component {
   render() {
     const { handleLogout } = this.props;
     return (
       <>
-          {/* <button onClick={handleLogout}>logout</button> */}
-          <Router>
-            <AnonRoute exact path='/' component={Home} />
-            <AnonRoute exact path="/login" component={Login} />
-            <AnonRoute exact path="/signup" component={Signup} />
-            <PrivateRoute exact path="/private" component={PrivateView} />
-          </Router>
+        {/* <button onClick={handleLogout}>logout</button> */}
+        <Router>
+          <AnonRoute exact path='/' component={Home} />
+          <AnonRoute exact path="/login" component={Login} />
+          <AnonRoute exact path="/signup" component={Signup} />
+          <AnonRoute exact path='/main' component={Main} />
+          <PrivateRoute exact path="/private" component={PrivateView} />
+        </Router>
       </>
     );
   }
