@@ -3,6 +3,7 @@ import { withAuth } from '../../Context/AuthContext';
 
 import '../../styles/Login.css';
 import '../../styles/Button.css';
+import '../../styles/Input.css';
 
 class Login extends Component {
   state = {
@@ -42,7 +43,7 @@ class Login extends Component {
           <form onSubmit={this.handleFormSubmit}>
             <div className="input-wrapper">
               <input
-                type="email"
+                type="text"
                 className="input-wrapper-input"
                 name="username"
                 value={username}

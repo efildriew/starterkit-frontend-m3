@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { withAuth } from '../../Context/AuthContext';
 
+import '../../styles/Input.css';
+
 class Signup extends Component {
 
   state = {

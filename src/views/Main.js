@@ -54,7 +54,7 @@ class Map extends Component {
         <GeolocateControl
           style={locStyle}
           positionOptions={{enableHighAccuracy: true}}
-          trackUserLocation={true}
+          // trackUserLocation={true}
         />
       </MapGL>
     );
