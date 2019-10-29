@@ -3,12 +3,12 @@ import MapGL, { NavigationControl, GeolocateControl } from 'react-map-gl';
 
 const TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
-const navStyle = {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  padding: '10px'
-};
+// const navStyle = {
+//   position: 'absolute',
+//   top: 0,
+//   left: 0,
+//   padding: '10px'
+// };
 
 const locStyle = {
   position: 'absolute',
@@ -45,12 +45,12 @@ class Map extends Component {
     return (
       <MapGL
         {...viewport}
-        mapStyle="mapbox://styles/mapbox/dark-v9"
+        mapStyle="mapbox://styles/mapbox/streets-v11"
         mapboxApiAccessToken={TOKEN}
         onViewportChange={this._onViewportChange}>
-        <div className="nav" style={navStyle}>
+        {/* <div className="nav" style={navStyle}>
           <NavigationControl/>
-        </div>
+        </div> */}
         <GeolocateControl
           style={locStyle}
           positionOptions={{enableHighAccuracy: true}}
