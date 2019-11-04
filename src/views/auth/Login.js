@@ -28,13 +28,6 @@ class Login extends Component {
   render() {
     const { username, password } = this.state;
     return (
-      // <form onSubmit={this.handleFormSubmit}>
-      //   <label>Username:</label>
-      //   <input type="text" name="username" value={username} onChange={this.handleChange}/>
-      //   <label>Password:</label>
-        // <input type="password" name="password" value={password} on name="username" value={username} onChange={this.handleChange}/>Change={this.handleChange} />
-      //   <input type="submit" value="Login" />
-      // </form>
       <div className="background">
         <div className="container">
           <div className='input-box'>
@@ -51,7 +44,7 @@ class Login extends Component {
                 required
                 autoComplete="off"
               />
-              <label>E-mail</label>
+              <label>Username</label>
               <div className="indicator"></div>
             </div>
             <div className="input-wrapper">

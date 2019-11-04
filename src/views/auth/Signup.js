@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { withAuth } from '../../Context/AuthContext';
 
+import '../../styles/Login.css';
+import '../../styles/Button.css';
 import '../../styles/Input.css';
 
 class Signup extends Component {
@@ -9,6 +11,7 @@ class Signup extends Component {
   state = {
     username: "",
     password: "",
+    confirmPassword: "",
   };
 
   handleChange = (event) => {  
@@ -18,30 +21,72 @@ class Signup extends Component {
 
   handleFormSubmit = (e) => {
     e.preventDefault();
-    const { username, password } = this.state;
-    this.props.handleSignup({
-      username,
-      password
-    })
+    const { username, password, confirmPassword } = this.state;
+    if (password === confirmPassword) {
+      this.props.handleSignup({
+        username,
+        password
+      })
+    } else {
+      alert('Passwords does not match');
+    }
   }
 
   render() {
-    const { username, password } = this.state;
+    const { username, password, confirmPassword } = this.state;
     return (
-      <div>
+      <div className="background">
+      <div className="container">
+        <div className='input-box'>
+          <h2>You are a step away of sharing your journey!</h2>
+        </div>
         <form onSubmit={this.handleFormSubmit}>
-          <label>Username:</label>
-          <input type="text" name="username" value={username} onChange={this.handleChange}/>
-          <label>Password:</label>
-          <input type="password" name="password" value={password} onChange={this.handleChange} />
-          <input type="submit" value="Signup" />
+          <div className="input-wrapper">
+            <input
+              type="text"
+              className="input-wrapper-input"
+              name="username"
+              value={username}
+              onChange={this.handleChange}
+              required
+              autoComplete="off"
+            />
+            <label>Username</label>
+            <div className="indicator"></div>
+          </div>
+          <div className="input-wrapper">
+            <input
+              type="password"
+              className="input-wrapper-input"
+              name="password"
+              value={password}
+              onChange={this.handleChange}
+              required
+              autoComplete="off"
+            />
+            <label>Password</label>
+            <div className="indicator"></div>
+          </div>
+          <div className="input-wrapper">
+            <input
+              type="password"
+              className="input-wrapper-input"
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={this.handleChange}
+              required
+              autoComplete="off"
+            />
+            <label>Repeat Password</label>
+            <div className="indicator"></div>
+          </div>
+          <div className="button-wrapper">
+            <input className='btn' type="submit" />
+          </div>
         </form>
-
-        <p>Already have account? 
-          <Link to={"/login"}> Login</Link>
-        </p>
-
       </div>
+    </div>
+
     )
   }
 }

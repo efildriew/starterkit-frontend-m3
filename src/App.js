@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router} from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 import PrivateView from './views/PrivateView';
 import Login from './views/auth/Login';
@@ -11,6 +11,8 @@ import AnonRoute from './components/AnonRoute';
 
 import Home from './views/Home';
 import Main from './views/Main';
+import userLoc from './views/userLoc';
+import Mapbox from './views/Mapbox';
 
 class App extends Component {
   render() {
@@ -19,11 +21,13 @@ class App extends Component {
       <>
         {/* <button onClick={handleLogout}>logout</button> */}
         <Router>
-          <AnonRoute exact path='/' component={Home} />
+          <AnonRoute exact path="/" component={Home} />
           <AnonRoute exact path="/login" component={Login} />
           <AnonRoute exact path="/signup" component={Signup} />
-          <AnonRoute exact path='/main' component={Main} />
-          <PrivateRoute exact path="/private" component={PrivateView} />
+          {/* <AnonRoute exact path='/main' component={Main} /> */}
+          <PrivateRoute exact path="/main" component={Main} />
+          <PrivateRoute exact path="/main/userLoc" component={userLoc} />
+          <PrivateRoute exact path="/map" component={Mapbox} />
         </Router>
       </>
     );
