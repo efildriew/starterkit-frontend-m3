@@ -10,8 +10,6 @@ import PrivateRoute from './components/PrivateRoute';
 import AnonRoute from './components/AnonRoute';
 
 import Home from './views/Home';
-import Main from './views/Main';
-import userLoc from './views/userLoc';
 import Mapbox from './views/Mapbox';
 
 class App extends Component {
@@ -24,9 +22,6 @@ class App extends Component {
           <AnonRoute exact path="/" component={Home} />
           <AnonRoute exact path="/login" component={Login} />
           <AnonRoute exact path="/signup" component={Signup} />
-          {/* <AnonRoute exact path='/main' component={Main} /> */}
-          <PrivateRoute exact path="/main" component={Main} />
-          <PrivateRoute exact path="/main/userLoc" component={userLoc} />
           <PrivateRoute exact path="/map" component={Mapbox} />
         </Router>
       </>
