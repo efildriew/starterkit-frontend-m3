@@ -4,30 +4,30 @@ class AuthService {
   constructor() {
     this.auth = axios.create({
       baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
-      withCredentials: true
-    })
+      withCredentials: true,
+    });
   }
 
-  signup(user) {
+  async signup(user) {
     const { username, password } = user;
-    return this.auth.post('/signup', {username, password})
-      .then(({ data }) => data);
+    const { data } = await this.auth.post('/signup', { username, password });
+    return data;
   }
 
-  login(user) {
+  async login(user) {
     const { username, password } = user;
-    return this.auth.post('/login', {username, password})
-      .then(({ data }) => data);
+    const { data } = await this.auth.post('/login', { username, password });
+    return data;
   }
 
-  logout() {
-    return this.auth.get('/logout', {})
-      .then(response => response.data)
+  async logout() {
+    const response = await this.auth.get('/logout', {});
+    return response.data;
   }
 
-  me(user) {
-    return this.auth.get('/me')
-    .then(response => response.data)
+  async me(user) {
+    const response = await this.auth.get('/me');
+    return response.data;
   }
 }
 

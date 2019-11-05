@@ -11,6 +11,8 @@ import AnonRoute from './components/AnonRoute';
 
 import Home from './views/Home';
 import Mapbox from './views/Mapbox';
+// import Main from './views/Main';
+import MapDirections from './views/Directions';
 
 class App extends Component {
   render() {
@@ -23,6 +25,8 @@ class App extends Component {
           <AnonRoute exact path="/login" component={Login} />
           <AnonRoute exact path="/signup" component={Signup} />
           <PrivateRoute exact path="/map" component={Mapbox} />
+          <PrivateRoute exact path="/directions" component={MapDirections} />
+          {/* <PrivateRoute exact path="/main" component={Main} /> */}
         </Router>
       </>
     );

@@ -1,12 +1,10 @@
 import mapboxgl from 'mapbox-gl';
-import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import Directions from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 // import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-// import journeyService from '../services/journeyService';
 import { withAuth } from '../Context/AuthContext';
 
-class Mapbox extends Component {
+class MapDirections extends Component {
   state = {
     longitude: 0,
     latitude: 0,
@@ -22,7 +20,6 @@ class Mapbox extends Component {
         center: [position.coords.longitude, position.coords.latitude],
         zoom: 15,
       });
-
       this.map.addControl(
         new mapboxgl.GeolocateControl({
           positionOptions: {
@@ -32,25 +29,18 @@ class Mapbox extends Component {
         }),
       );
 
-      this.map.geocoder = new MapboxGeocoder({
+      this.map.directions = new Directions({
         accessToken: mapboxgl.accessToken,
-        marker: {
-          color: 'limegreen',
-        },
-        mapboxgl,
+        unit: 'metric',
       });
 
-      document.getElementById('geocoder').appendChild(this.map.geocoder.onAdd(this.map));
-
-      // journeyService.getAllJourneys().then(journeys => {
-      //   console.log(journeys);
+      document.getElementById('geocoder').appendChild(this.map.directions.onAdd(this.map));
+      // this.map.geocoder.on('result', result => {
+      //   this.setState({
+      //     latitude: result.result.center[0],
+      //     longitude: result.result.center[1],
+      //   });
       // });
-      this.map.geocoder.on('result', result => {
-        this.setState({
-          latitude: result.result.center[0],
-          longitude: result.result.center[1],
-        });
-      });
     });
   }
 
@@ -71,4 +61,4 @@ class Mapbox extends Component {
   }
 }
 
-export default withAuth(Mapbox);
+export default withAuth(MapDirections);
