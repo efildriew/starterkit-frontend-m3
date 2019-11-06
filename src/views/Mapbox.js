@@ -3,8 +3,10 @@ import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 // import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-// import journeyService from '../services/journeyService';
+import journeyService from '../services/journeyService';
 import { withAuth } from '../Context/AuthContext';
+
+import '../styles/Marker.css';
 
 class Mapbox extends Component {
   state = {
@@ -20,7 +22,7 @@ class Mapbox extends Component {
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [position.coords.longitude, position.coords.latitude],
-        zoom: 15,
+        zoom: 10,
       });
 
       this.map.addControl(
@@ -42,9 +44,23 @@ class Mapbox extends Component {
 
       document.getElementById('geocoder').appendChild(this.map.geocoder.onAdd(this.map));
 
-      // journeyService.getAllJourneys().then(journeys => {
-      //   console.log(journeys);
-      // });
+      journeyService.getAllJourneys().then(journeys => {
+        console.log(journeys);
+        journeys.journeys.forEach(marker => {
+          // const coords = [marker.longitude, marker.latitude];
+          console.log(marker);
+          const element = document.createElement('div');
+          element.className = 'marker';
+          new mapboxgl.Marker(element)
+            .setLngLat([marker.latitude, marker.longitude])
+            .setPopup(
+              new mapboxgl.Popup({ offset: 25 }) // add popups
+                .setHTML(`<h3>This Journey departs at:</h3><p>${marker.journeyDate}</p>`),
+            )
+            .addTo(this.map);
+        });
+      });
+
       this.map.geocoder.on('result', result => {
         this.setState({
           latitude: result.result.center[0],

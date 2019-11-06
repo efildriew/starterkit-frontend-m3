@@ -83,10 +83,7 @@ class Map extends Component {
           >
             <div>You are here!</div>
           </Marker>
-          {/* <GeolocateControl 
-            positionOptions={{enableHighAccuracy: true}}
-            trackUserLocation={true}
-          /> */}
+          <GeolocateControl positionOptions={{ enableHighAccuracy: true }} trackUserLocation={true} />
         </MapGL>
         <button onClick={this.getUserPosition}>Find Me!</button>
         <div className="input-wrapper">

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-class journeyService {
+class JourneyService {
   constructor() {
     this.journeys = axios.create({
       baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
@@ -13,5 +13,7 @@ class journeyService {
     return data;
   }
 }
+
+const journeyService = new JourneyService();
 
 export default journeyService;
