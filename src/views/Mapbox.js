@@ -4,6 +4,7 @@ import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import React, { Component } from 'react';
 
 import journeyService from '../services/journeyService';
+import Navbar from '../components/Navbar';
 import { withAuth } from '../Context/AuthContext';
 
 import '../styles/Marker.css';
@@ -78,6 +79,7 @@ class Mapbox extends Component {
     const { user } = this.props;
     return (
       <>
+        <Navbar />
         <div id="map" style={mapStyle}></div>
         <div className="input-wrapper" id="geocoder">
           <p>Welcome, {user.username}! Please, introduce your current location!</p>
