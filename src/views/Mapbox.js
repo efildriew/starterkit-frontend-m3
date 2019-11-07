@@ -46,10 +46,9 @@ class Mapbox extends Component {
       document.getElementById('geocoder').appendChild(this.map.geocoder.onAdd(this.map));
 
       journeyService.getAllJourneys().then(journeys => {
-        console.log(journeys);
+        // console.log(journeys);
         journeys.journeys.forEach(marker => {
-          // const coords = [marker.longitude, marker.latitude];
-          console.log(marker);
+          // console.log(marker);
           const element = document.createElement('div');
           element.className = 'marker';
           new mapboxgl.Marker(element)
