@@ -12,11 +12,10 @@ import Home from './views/Home';
 import Mapbox from './views/Mapbox';
 
 class App extends Component {
+  // eslint-disable-next-line class-methods-use-this
   render() {
-    const { handleLogout } = this.props;
     return (
       <>
-        {/* <button onClick={handleLogout}>logout</button> */}
         <Router>
           <AnonRoute exact path="/" component={Home} />
           <AnonRoute exact path="/login" component={Login} />
