@@ -12,6 +12,11 @@ class JourneyService {
     const { data } = await this.journeys.get('/journeys');
     return data;
   }
+
+  async createJourney(body) {
+    console.log(body);
+    return this.journeys.post('/journeys', body);
+  }
 }
 
 const journeyService = new JourneyService();
