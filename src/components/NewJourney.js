@@ -2,6 +2,10 @@
 import React, { Component } from 'react';
 import { withAuth } from '../Context/AuthContext';
 
+import '../styles/Button.css';
+import '../styles/Input.css';
+import '../styles/Login.css';
+
 class NewJourney extends Component {
   state = {
     originLatitude: 0,
@@ -19,15 +23,74 @@ class NewJourney extends Component {
   onSubmit() {}
 
   render() {
+    const { originLatitude, originLongitude, destinationLatitude, destinationLongitude, time } = this.state;
     return (
-      <div>
-        <form onSubmit={this.onSubmit}>
-          <input type="number" name="originLatitude" onChange={this.onChange}></input>
-          <input type="number" name="originLongitude" onChange={this.onChange}></input>
-          <input type="number" name="destinationLatitude" onChange={this.onChange}></input>
-          <input type="number" name="destinationLongitude" onChange={this.onChange}></input>
-          <input type="number" name="time" onChange={this.onChange}></input>
-        </form>
+      <div className="background">
+        <div className="container">
+          <div className="input-box">
+            <h4>Where are you?</h4>
+          </div>
+          <form onSubmit={this.onSubmit}>
+            <div className="input-wrapper">
+              <input
+                type="number"
+                className="input-wrapper-input"
+                name="originLatitude"
+                value={originLatitude}
+                onChange={this.onChange}
+              />
+              <label>Origin Latitude</label>
+              <div className="indicator"></div>
+            </div>
+            <div className="input-wrapper">
+              <input
+                type="number"
+                className="input-wrapper-input"
+                name="originLongitude"
+                value={originLongitude}
+                onChange={this.onChange}
+              />
+              <label>Origin Longitude</label>
+              <div className="indicator"></div>
+            </div>
+            <div className="input-box">
+              <h4>Where do you want to go?</h4>
+            </div>
+            <div className="input-wrapper">
+              <input
+                type="number"
+                className="input-wrapper-input"
+                name="destinationLatitude"
+                value={destinationLatitude}
+                onChange={this.onChange}
+              />
+              <label>Destination Latitude</label>
+              <div className="indicator"></div>
+            </div>
+            <div className="input-wrapper">
+              <input
+                type="number"
+                className="input-wrapper-input"
+                name="destinationLongitude"
+                value={destinationLongitude}
+                onChange={this.onChange}
+              />
+              <label>Destination Longitude</label>
+              <div className="indicator"></div>
+            </div>
+            <div className="input-box">
+              <h4>At what time?</h4>
+            </div>
+            <div className="input-wrapper">
+              <input type="number" className="input-wrapper-input" name="time" value={time} onChange={this.onChange} />
+              <label>Time</label>
+              <div className="indicator"></div>
+            </div>
+            <div className="button-wrapper">
+              <input className="btn" type="submit" />
+            </div>
+          </form>
+        </div>
       </div>
     );
   }

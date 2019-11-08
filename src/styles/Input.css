@@ -9,6 +9,11 @@
   padding: 10%;
 }
 
+.input-box h4 {
+  margin: 0 auto;
+  padding: 5%;
+}
+
 .input-wrapper {
   display: block;
   height: 60px;
