@@ -1,0 +1,8 @@
+.btn-new-journey-container > a {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-new-journey {
+  margin-top: 15%;
+}

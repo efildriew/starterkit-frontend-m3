@@ -2,11 +2,13 @@ import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 // import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import journeyService from '../services/journeyService';
 import Navbar from '../components/Navbar';
 import { withAuth } from '../Context/AuthContext';
 
+import '../styles/Mapbox.css';
 import '../styles/Marker.css';
 
 class Mapbox extends Component {
@@ -26,14 +28,14 @@ class Mapbox extends Component {
         zoom: 10,
       });
 
-      this.map.addControl(
-        new mapboxgl.GeolocateControl({
-          positionOptions: {
-            enableHighAccuracy: true,
-          },
-          trackUserLocation: true,
-        }),
-      );
+      const geolocate = new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true,
+        },
+        trackUserLocation: true,
+      });
+
+      this.map.addControl(geolocate);
 
       this.map.geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
@@ -67,6 +69,8 @@ class Mapbox extends Component {
           longitude: result.result.center[1],
         });
       });
+
+      this.map.on('load', () => geolocate.trigger());
     });
   }
 
@@ -82,6 +86,11 @@ class Mapbox extends Component {
         <div id="map" style={mapStyle}></div>
         <div className="input-wrapper" id="geocoder">
           <p>Welcome, {user.username}! Please, introduce your current location!</p>
+        </div>
+        <div className="btn-new-journey-container">
+          <Link to="/journeys">
+            <button className="btn btn-new-journey">Create a new Journey!</button>
+          </Link>
         </div>
       </>
     );
