@@ -27,8 +27,10 @@ class NewJourney extends Component {
   onSubmit = e => {
     e.preventDefault();
     const { body } = this.state;
-    console.log(body);
-    journeyService.createJourney(body).then(res => console.log(res));
+    const {
+      history: { push },
+    } = this.props;
+    journeyService.createJourney(body).then(push('/map'));
   };
 
   render() {

@@ -25,7 +25,7 @@ class Mapbox extends Component {
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [position.coords.longitude, position.coords.latitude],
-        zoom: 10,
+        zoom: 15,
       });
 
       const geolocate = new mapboxgl.GeolocateControl({
@@ -70,7 +70,12 @@ class Mapbox extends Component {
         });
       });
 
-      this.map.on('load', () => geolocate.trigger());
+      this.map.on('load', () => {
+        geolocate.trigger();
+        setTimeout(() => {
+          this.map.setZoom(15);
+        }, 100);
+      });
     });
   }
 

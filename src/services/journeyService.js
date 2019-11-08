@@ -14,7 +14,6 @@ class JourneyService {
   }
 
   async createJourney(body) {
-    console.log(body);
     return this.journeys.post('/journeys', body);
   }
 }
