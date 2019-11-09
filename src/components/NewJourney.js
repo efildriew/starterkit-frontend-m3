@@ -19,10 +19,15 @@ class NewJourney extends Component {
     },
   };
 
-  onChange = e =>
+  onChange = e => {
+    const { body } = this.state;
     this.setState({
-      [e.target.name]: e.target.value,
+      body: {
+        ...body,
+        [e.target.name]: e.target.value,
+      },
     });
+  };
 
   onSubmit = e => {
     e.preventDefault();
@@ -34,7 +39,7 @@ class NewJourney extends Component {
   };
 
   render() {
-    const { body } = this.state;
+    const { originLatitude, originLongitude, destinationLatitude, destinationLongitude, time } = this.state.body;
     return (
       <div className="background">
         <div className="container">
@@ -47,7 +52,7 @@ class NewJourney extends Component {
                 type="number"
                 className="input-wrapper-input"
                 name="originLatitude"
-                value={body.originLatitude}
+                value={originLatitude}
                 onChange={this.onChange}
               />
               <label>Origin Latitude</label>
@@ -58,7 +63,7 @@ class NewJourney extends Component {
                 type="number"
                 className="input-wrapper-input"
                 name="originLongitude"
-                value={body.originLongitude}
+                value={originLongitude}
                 onChange={this.onChange}
               />
               <label>Origin Longitude</label>
@@ -72,7 +77,7 @@ class NewJourney extends Component {
                 type="number"
                 className="input-wrapper-input"
                 name="destinationLatitude"
-                value={body.destinationLatitude}
+                value={destinationLatitude}
                 onChange={this.onChange}
               />
               <label>Destination Latitude</label>
@@ -83,7 +88,7 @@ class NewJourney extends Component {
                 type="number"
                 className="input-wrapper-input"
                 name="destinationLongitude"
-                value={body.destinationLongitude}
+                value={destinationLongitude}
                 onChange={this.onChange}
               />
               <label>Destination Longitude</label>
@@ -93,13 +98,7 @@ class NewJourney extends Component {
               <h4>At what time?</h4>
             </div>
             <div className="input-wrapper">
-              <input
-                type="number"
-                className="input-wrapper-input"
-                name="time"
-                value={body.time}
-                onChange={this.onChange}
-              />
+              <input type="number" className="input-wrapper-input" name="time" value={time} onChange={this.onChange} />
               <label>Time</label>
               <div className="indicator"></div>
             </div>
