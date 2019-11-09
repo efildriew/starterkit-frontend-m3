@@ -48,18 +48,18 @@ class Mapbox extends Component {
       document.getElementById('geocoder').appendChild(this.map.geocoder.onAdd(this.map));
 
       journeyService.getAllJourneys().then(journeys => {
-        // console.log(journeys);
+        console.log(journeys);
         journeys.journeys.forEach(marker => {
-          // console.log(marker);
-          const element = document.createElement('div');
-          element.className = 'marker';
-          new mapboxgl.Marker(element)
-            .setLngLat([marker.latitude, marker.longitude])
-            .setPopup(
-              new mapboxgl.Popup({ offset: 25 }) // add popups
-                .setHTML(`<h3>This Journey departs at:</h3><p>${marker.journeyDate}</p>`),
-            )
-            .addTo(this.map);
+          console.log(marker);
+          // const element = document.createElement('div');
+          // element.className = 'marker';
+          // new mapboxgl.Marker(element)
+          //   .setLngLat([marker.latitude, marker.longitude])
+          //   .setPopup(
+          //     new mapboxgl.Popup({ offset: 25 }) // add popups
+          //       .setHTML(`<h3>This Journey departs at:</h3><p>${marker.journeyDate}</p>`),
+          //   )
+          //   .addTo(this.map);
         });
       });
 
