@@ -2,8 +2,10 @@ import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 // import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 
+import JourneyDetails from './JourneyDetails';
 import journeyService from '../services/journeyService';
 import Navbar from '../components/Navbar';
 import { withAuth } from '../Context/AuthContext';
@@ -47,19 +49,39 @@ class Mapbox extends Component {
 
       document.getElementById('geocoder').appendChild(this.map.geocoder.onAdd(this.map));
 
+      const addPopup = reactElement => {
+        const placeholder = document.createElement('div');
+        ReactDOM.render(reactElement, placeholder);
+
+        const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(placeholder);
+        return popup;
+        // .addTo(this.map);
+      };
+
       journeyService.getAllJourneys().then(response => {
-        response.journeys.forEach(marker => {
-          console.log(marker);
+        response.journeys.forEach(journey => {
+          console.log(journey);
           const element = document.createElement('div');
           element.className = 'marker';
-          new mapboxgl.Marker(element)
-            .setLngLat([marker.originLatitude, marker.originLongitude])
-            .setPopup(
-              new mapboxgl.Popup({ offset: 25 }).setHTML(
-                `<h3>This Journey departs at:</h3><p>${marker.time}</p><button>test</button>`,
-              ),
-            )
+
+          const marker = new mapboxgl.Marker(element)
+            .setLngLat([journey.originLatitude, journey.originLongitude])
+            // .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(''))
+            .setPopup(addPopup(<JourneyDetails />))
             .addTo(this.map);
+          // const marker = new mapboxgl.Marker(element).setLngLat([journey.originLatitude, journey.originLongitude]);
+          // element.addEventListener('click', () => {
+          //   // setTimeout(() => {
+          //   //   console.log(document.getElementById('myMarker'));
+          //   //   ReactDOM.render(<JourneyDetails />, document.getElementById('myMarker'));
+          //   // }, 10);
+
+          //   if (!marker.getPopup().isOpen()) {
+          //     console.log(this.map);
+          //     marker.getPopup().addTo(this.map);
+          //   }
+          //   ReactDOM.render(<JourneyDetails />, document.querySelector('.mapboxgl-popup-content'));
+          // });
         });
       });
 

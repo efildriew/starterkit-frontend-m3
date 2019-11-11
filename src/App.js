@@ -11,6 +11,7 @@ import AnonRoute from './components/AnonRoute';
 import Home from './views/Home';
 import Mapbox from './views/Mapbox';
 import NewJourney from './components/NewJourney';
+import JourneyDetails from './views/JourneyDetails';
 
 class App extends Component {
   // eslint-disable-next-line class-methods-use-this
@@ -23,6 +24,7 @@ class App extends Component {
           <AnonRoute exact path="/signup" component={Signup} />
           <PrivateRoute exact path="/map" component={Mapbox} />
           <PrivateRoute exact path="/journeys" component={NewJourney} />
+          <PrivateRoute exact path="/journeys/:id" component={JourneyDetails} />
         </Router>
       </>
     );
