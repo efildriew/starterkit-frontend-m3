@@ -3,7 +3,7 @@ import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 // import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Link } from 'react-router-dom';
+import { BrowserRouter as Router, Link } from 'react-router-dom';
 
 import JourneyDetails from './JourneyDetails';
 import journeyService from '../services/journeyService';
@@ -12,6 +12,7 @@ import { withAuth } from '../Context/AuthContext';
 
 import '../styles/Mapbox.css';
 import '../styles/Marker.css';
+import RouterForwarder from '../Context/RouterForwarder';
 
 class Mapbox extends Component {
   state = {
@@ -52,36 +53,48 @@ class Mapbox extends Component {
       const addPopup = reactElement => {
         const placeholder = document.createElement('div');
         ReactDOM.render(reactElement, placeholder);
-
         const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(placeholder);
         return popup;
-        // .addTo(this.map);
       };
 
+      // const addLinksToPopup = reactElement => {
+
+      // }
+
       journeyService.getAllJourneys().then(response => {
+        const {
+          history: { push },
+        } = this.props;
         response.journeys.forEach(journey => {
           console.log(journey);
           const element = document.createElement('div');
           element.className = 'marker';
 
-          const marker = new mapboxgl.Marker(element)
+          new mapboxgl.Marker(element)
             .setLngLat([journey.originLatitude, journey.originLongitude])
-            // .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(''))
-            .setPopup(addPopup(<JourneyDetails />))
+            .setPopup(
+              addPopup(
+                <>
+                  {/* <Router> */}
+                  <JourneyDetails
+                    id={journey._id}
+                    destinationLatitude={journey.destinationLatitude}
+                    destinationLongitude={journey.destinationLongitude}
+                    time={journey.time}
+                  />
+                  <button
+                    onClick={() => {
+                      push(`/journeys/${journey._id}`);
+                    }}
+                  >
+                    test
+                  </button>
+                  {/* <Link to={`/journeys/${journey._id}`}>test</Link>, */}
+                  {/* </Router> */}
+                </>,
+              ),
+            )
             .addTo(this.map);
-          // const marker = new mapboxgl.Marker(element).setLngLat([journey.originLatitude, journey.originLongitude]);
-          // element.addEventListener('click', () => {
-          //   // setTimeout(() => {
-          //   //   console.log(document.getElementById('myMarker'));
-          //   //   ReactDOM.render(<JourneyDetails />, document.getElementById('myMarker'));
-          //   // }, 10);
-
-          //   if (!marker.getPopup().isOpen()) {
-          //     console.log(this.map);
-          //     marker.getPopup().addTo(this.map);
-          //   }
-          //   ReactDOM.render(<JourneyDetails />, document.querySelector('.mapboxgl-popup-content'));
-          // });
         });
       });
 
@@ -110,7 +123,9 @@ class Mapbox extends Component {
     return (
       <>
         <Navbar />
-        <div id="map" style={mapStyle}></div>
+        <RouterForwarder context={this.context}>
+          <div id="map" style={mapStyle}></div>
+        </RouterForwarder>
         <div className="input-wrapper" id="geocoder">
           <p>Welcome, {user.username}! Please, introduce your current location!</p>
         </div>
