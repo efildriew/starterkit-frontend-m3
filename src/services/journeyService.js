@@ -1,5 +1,4 @@
 import axios from 'axios';
-import UpdateJourney from '../components/UpdateJourney';
 
 class JourneyService {
   constructor() {
@@ -15,12 +14,16 @@ class JourneyService {
   }
 
   async createJourney(journey) {
-    console.log(journey);
     return this.journeys.post('/journeys', journey);
   }
 
-  async updateJourney(journey) {
-    return this.journeys.put(`/journeys/${journey.id}`, journey);
+  async getJourney(id) {
+    const { data } = await this.journeys.get(`/journeys/${id}`);
+    return data;
+  }
+
+  async updateJourney(journey, id) {
+    return this.journeys.put(`/journeys/${id}`, journey).then(response => console.log(response));
   }
 
   async deleteJourney(id) {

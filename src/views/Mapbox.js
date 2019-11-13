@@ -3,7 +3,7 @@ import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 // import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import JourneyDetails from './JourneyDetails';
 import journeyService from '../services/journeyService';
@@ -12,7 +12,6 @@ import { withAuth } from '../Context/AuthContext';
 
 import '../styles/Mapbox.css';
 import '../styles/Marker.css';
-import RouterForwarder from '../Context/RouterForwarder';
 
 class Mapbox extends Component {
   state = {
@@ -57,10 +56,6 @@ class Mapbox extends Component {
         return popup;
       };
 
-      // const addLinksToPopup = reactElement => {
-
-      // }
-
       journeyService.getAllJourneys().then(response => {
         const {
           history: { push },
@@ -75,7 +70,6 @@ class Mapbox extends Component {
             .setPopup(
               addPopup(
                 <>
-                  {/* <Router> */}
                   <JourneyDetails
                     id={journey._id}
                     destinationLatitude={journey.destinationLatitude}
@@ -87,10 +81,15 @@ class Mapbox extends Component {
                       push(`/journeys/${journey._id}`);
                     }}
                   >
-                    test
+                    update
                   </button>
-                  {/* <Link to={`/journeys/${journey._id}`}>test</Link>, */}
-                  {/* </Router> */}
+                  <button
+                    onClick={() => {
+                      journeyService.deleteJourney(journey._id).then(res => console.log(res));
+                    }}
+                  >
+                    delete
+                  </button>
                 </>,
               ),
             )
@@ -99,6 +98,7 @@ class Mapbox extends Component {
       });
 
       this.map.geocoder.on('result', result => {
+        console.log(result);
         this.setState({
           latitude: result.result.center[0],
           longitude: result.result.center[1],
@@ -123,9 +123,7 @@ class Mapbox extends Component {
     return (
       <>
         <Navbar />
-        <RouterForwarder context={this.context}>
-          <div id="map" style={mapStyle}></div>
-        </RouterForwarder>
+        <div id="map" style={mapStyle}></div>
         <div className="input-wrapper" id="geocoder">
           <p>Welcome, {user.username}! Please, introduce your current location!</p>
         </div>

@@ -10,13 +10,30 @@ import '../styles/Login.css';
 class NewJourney extends Component {
   state = {
     body: {
-      originLatitude: this.props.originLatitude,
-      originLongitude: this.props.originLongitude,
-      destinationLatitude: this.props.destinationLatitude,
-      destinationLongitude: this.props.destinationLongitude,
-      time: this.props.time,
+      originLatitude: 0,
+      originLongitude: 0,
+      destinationLatitude: 0,
+      destinationLongitude: 0,
+      time: 0,
     },
   };
+
+  componentDidMount() {
+    console.log(this.props.match.params.id);
+    console.log(this.props);
+    journeyService.getJourney(this.props.match.params.id).then(response => {
+      console.log(response);
+      this.setState({
+        body: {
+          originLatitude: response.journey.originLatitude,
+          originLongitude: response.journey.originLongitude,
+          destinationLatitude: response.journey.destinationLatitude,
+          destinationLongitude: response.journey.destinationLongitude,
+          time: response.journey.time,
+        },
+      });
+    });
+  }
 
   onChange = e => {
     const { body } = this.state;
@@ -31,10 +48,11 @@ class NewJourney extends Component {
   onSubmit = e => {
     e.preventDefault();
     const { body } = this.state;
+    console.log(body);
     const {
       history: { push },
     } = this.props;
-    journeyService.createJourney(body).then(push('/map'));
+    journeyService.updateJourney(body, this.props.match.params.id).then(push('/map'));
   };
 
   render() {
