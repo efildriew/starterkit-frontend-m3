@@ -28,6 +28,10 @@ class Mapbox extends Component {
   };
 
   componentDidMount() {
+    this.mountMap();
+  }
+
+  mountMap = () => {
     console.log('map being mounted');
 
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
@@ -157,7 +161,7 @@ class Mapbox extends Component {
         console.log('map mounted');
       });
     });
-  }
+  };
 
   onChange = e => {
     const { journey } = this.state;
@@ -210,7 +214,8 @@ class Mapbox extends Component {
             </form>
           )}
         </div>
-        {!timePhase && <div className="input-wrapper" id="geocoder"></div>}
+        <div id="geocoder" className={`input-wrapper ${!timePhase ? 'show' : 'hidden'}`}></div>
+        {/* {!timePhase && <div className="input-wrapper" id="geocoder"></div>} */}
         {/* <div className="btn-new-journey-container">
           <Link to="/journeys">
             <button className="btn btn-new-journey">Create a new Journey!</button>
