@@ -3,7 +3,7 @@ import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 // import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-// import { Link } from 'react-router-dom';
+// import { Router } from 'react-router-dom';
 
 import JourneyDetails from './JourneyDetails';
 import journeyService from '../services/journeyService';
@@ -25,141 +25,169 @@ class Mapbox extends Component {
     originPhase: true,
     destinationPhase: false,
     timePhase: false,
+    initialLongitude: 41.3977391,
+    initialLatitude: 2.1881113,
+    mapMounted: false,
   };
 
   componentDidMount() {
-    this.mountMap();
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    };
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        this.mountMap(position.coords.longitude, position.coords.latitude);
+        this.setState({
+          initialLatitude: position.coords.latitude,
+          initialLongitude: position.coords.longitude,
+        });
+      },
+      err => console.log(err),
+      options,
+    );
   }
 
-  mountMap = () => {
+  mountMap = (longitude = this.state.initialLongitude, latitude = this.state.latitude) => {
+    const { mapMounted } = this.state;
+
+    if (mapMounted) {
+      this.map.flyTo({
+        center: [longitude, latitude],
+      });
+      return;
+    }
+
     console.log('map being mounted');
 
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
     console.log('fetching user location and creating map');
 
-    navigator.geolocation.getCurrentPosition(position => {
-      console.log(position);
-      this.map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [position.coords.longitude, position.coords.latitude],
-        zoom: 15,
+    this.map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [longitude, latitude],
+      zoom: 15,
+    });
+
+    this.setState({
+      journey: {
+        originCoordinates: [latitude, longitude],
+      },
+    });
+
+    console.log('got location and map, creating geolocatecontrol');
+
+    const geolocate = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true,
+      },
+      trackUserLocation: true,
+    });
+
+    this.map.addControl(geolocate);
+
+    console.log('got geolocatecontrol, creating geocoder');
+
+    this.map.geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      marker: {
+        color: 'limegreen',
+      },
+      mapboxgl,
+    });
+
+    console.log('map created, fetching data');
+
+    document.getElementById('geocoder').appendChild(this.map.geocoder.onAdd(this.map));
+
+    const addPopup = reactElement => {
+      const placeholder = document.createElement('div');
+      ReactDOM.render(reactElement, placeholder);
+      const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(placeholder);
+      return popup;
+    };
+
+    journeyService.getAllJourneys().then(response => {
+      const {
+        history: { push },
+      } = this.props;
+      response.journeys.forEach(journey => {
+        console.log(journey);
+        const element = document.createElement('div');
+        element.className = 'marker';
+
+        new mapboxgl.Marker(element)
+          .setLngLat([journey.startLocation.coordinates[1], journey.startLocation.coordinates[0]])
+          .setPopup(
+            addPopup(
+              <>
+                <JourneyDetails
+                  id={journey._id}
+                  destinationLatitude={journey.startLocation.coordinates[1]}
+                  destinationLongitude={journey.startLocation.coordinates[0]}
+                  time={journey.time}
+                />
+                <button
+                  onClick={() => {
+                    push(`/journeys/${journey._id}`);
+                  }}
+                >
+                  update
+                </button>
+                <button
+                  onClick={() => {
+                    journeyService.deleteJourney(journey._id).then(res => console.log(res));
+                  }}
+                >
+                  delete
+                </button>
+              </>,
+            ),
+          )
+          .addTo(this.map);
       });
+    });
 
-      this.setState({
-        journey: {
-          originCoordinates: [position.coords.latitude, position.coords.longitude],
-        },
-      });
-
-      console.log('got location and map, creating geolocatecontrol');
-
-      const geolocate = new mapboxgl.GeolocateControl({
-        positionOptions: {
-          enableHighAccuracy: true,
-        },
-        trackUserLocation: true,
-      });
-
-      this.map.addControl(geolocate);
-
-      console.log('got geolocatecontrol, creating geocoder');
-
-      this.map.geocoder = new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
-        marker: {
-          color: 'limegreen',
-        },
-        mapboxgl,
-      });
-
-      console.log('map created, fetching data');
-
-      document.getElementById('geocoder').appendChild(this.map.geocoder.onAdd(this.map));
-
-      const addPopup = reactElement => {
-        const placeholder = document.createElement('div');
-        ReactDOM.render(reactElement, placeholder);
-        const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(placeholder);
-        return popup;
-      };
-
-      journeyService.getAllJourneys().then(response => {
-        const {
-          history: { push },
-        } = this.props;
-        response.journeys.forEach(journey => {
-          console.log(journey);
-          const element = document.createElement('div');
-          element.className = 'marker';
-
-          new mapboxgl.Marker(element)
-            .setLngLat([journey.startLocation.coordinates[1], journey.startLocation.coordinates[0]])
-            .setPopup(
-              addPopup(
-                <>
-                  <JourneyDetails
-                    id={journey._id}
-                    destinationLatitude={journey.startLocation.coordinates[1]}
-                    destinationLongitude={journey.startLocation.coordinates[0]}
-                    time={journey.time}
-                  />
-                  <button
-                    onClick={() => {
-                      push(`/journeys/${journey._id}`);
-                    }}
-                  >
-                    update
-                  </button>
-                  <button
-                    onClick={() => {
-                      journeyService.deleteJourney(journey._id).then(res => console.log(res));
-                    }}
-                  >
-                    delete
-                  </button>
-                </>,
-              ),
-            )
-            .addTo(this.map);
+    this.map.geocoder.on('result', response => {
+      console.log(response);
+      const { journey, originPhase, destinationPhase } = this.state;
+      if (originPhase) {
+        this.setState({
+          journey: {
+            ...journey,
+            originCoordinates: response.result.geometry.coordinates,
+            originName: response.result.text,
+          },
+          originPhase: false,
+          destinationPhase: true,
         });
-      });
+      } else if (destinationPhase) {
+        this.setState({
+          journey: {
+            ...journey,
+            destinationCoordinates: response.result.geometry.coordinates,
+            destinationName: response.result.text,
+          },
+          destinationPhase: false,
+          timePhase: true,
+        });
+        this.map.geocoder.clear();
+      }
+    });
 
-      this.map.geocoder.on('result', response => {
-        console.log(response);
-        const { journey, originPhase, destinationPhase } = this.state;
-        if (originPhase) {
-          this.setState({
-            journey: {
-              ...journey,
-              originCoordinates: response.result.geometry.coordinates,
-              originName: response.result.text,
-            },
-            originPhase: false,
-            destinationPhase: true,
-          });
-        } else if (destinationPhase) {
-          this.setState({
-            journey: {
-              ...journey,
-              destinationCoordinates: response.result.geometry.coordinates,
-              destinationName: response.result.text,
-            },
-            destinationPhase: false,
-            timePhase: true,
-          });
-        }
+    this.map.on('load', () => {
+      geolocate.trigger();
+      setTimeout(() => {
+        this.map.setZoom(15);
+      }, 100);
+      this.setState({
+        mapMounted: true,
       });
-
-      this.map.on('load', () => {
-        geolocate.trigger();
-        setTimeout(() => {
-          this.map.setZoom(15);
-        }, 100);
-        console.log(this.map.geocoder);
-        console.log('map mounted');
-      });
+      console.log(this.map.geocoder);
+      console.log('map mounted');
     });
   };
 
@@ -175,7 +203,7 @@ class Mapbox extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { journey } = this.state;
+    const { journey, initialLatitude, initialLongitude } = this.state;
     console.log(journey);
     journeyService.createJourney(journey);
     this.setState({
@@ -189,6 +217,7 @@ class Mapbox extends Component {
       originPhase: true,
       timePhase: false,
     });
+    this.mountMap(initialLongitude, initialLatitude);
   };
 
   render() {
