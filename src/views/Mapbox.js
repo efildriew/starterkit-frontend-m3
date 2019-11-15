@@ -3,7 +3,7 @@ import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 // import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 import JourneyDetails from './JourneyDetails';
 import journeyService from '../services/journeyService';
@@ -15,20 +15,41 @@ import '../styles/Marker.css';
 
 class Mapbox extends Component {
   state = {
-    longitude: 0,
-    latitude: 0,
+    journey: {
+      originCoordinates: [],
+      originName: '',
+      destinationCoordinates: [],
+      destinationName: '',
+      time: '',
+    },
+    originPhase: true,
+    destinationPhase: false,
+    timePhase: false,
   };
 
   componentDidMount() {
+    console.log('map being mounted');
+
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
+    console.log('fetching user location and creating map');
+
     navigator.geolocation.getCurrentPosition(position => {
+      console.log(position);
       this.map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [position.coords.longitude, position.coords.latitude],
         zoom: 15,
       });
+
+      this.setState({
+        journey: {
+          originCoordinates: [position.coords.latitude, position.coords.longitude],
+        },
+      });
+
+      console.log('got location and map, creating geolocatecontrol');
 
       const geolocate = new mapboxgl.GeolocateControl({
         positionOptions: {
@@ -39,6 +60,8 @@ class Mapbox extends Component {
 
       this.map.addControl(geolocate);
 
+      console.log('got geolocatecontrol, creating geocoder');
+
       this.map.geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         marker: {
@@ -46,6 +69,8 @@ class Mapbox extends Component {
         },
         mapboxgl,
       });
+
+      console.log('map created, fetching data');
 
       document.getElementById('geocoder').appendChild(this.map.geocoder.onAdd(this.map));
 
@@ -66,14 +91,14 @@ class Mapbox extends Component {
           element.className = 'marker';
 
           new mapboxgl.Marker(element)
-            .setLngLat([journey.originLatitude, journey.originLongitude])
+            .setLngLat([journey.startLocation.coordinates[1], journey.startLocation.coordinates[0]])
             .setPopup(
               addPopup(
                 <>
                   <JourneyDetails
                     id={journey._id}
-                    destinationLatitude={journey.destinationLatitude}
-                    destinationLongitude={journey.destinationLongitude}
+                    destinationLatitude={journey.startLocation.coordinates[1]}
+                    destinationLongitude={journey.startLocation.coordinates[0]}
                     time={journey.time}
                   />
                   <button
@@ -97,12 +122,30 @@ class Mapbox extends Component {
         });
       });
 
-      this.map.geocoder.on('result', result => {
-        console.log(result);
-        this.setState({
-          latitude: result.result.center[0],
-          longitude: result.result.center[1],
-        });
+      this.map.geocoder.on('result', response => {
+        console.log(response);
+        const { journey, originPhase, destinationPhase } = this.state;
+        if (originPhase) {
+          this.setState({
+            journey: {
+              ...journey,
+              originCoordinates: response.result.geometry.coordinates,
+              originName: response.result.text,
+            },
+            originPhase: false,
+            destinationPhase: true,
+          });
+        } else if (destinationPhase) {
+          this.setState({
+            journey: {
+              ...journey,
+              destinationCoordinates: response.result.geometry.coordinates,
+              destinationName: response.result.text,
+            },
+            destinationPhase: false,
+            timePhase: true,
+          });
+        }
       });
 
       this.map.on('load', () => {
@@ -110,9 +153,39 @@ class Mapbox extends Component {
         setTimeout(() => {
           this.map.setZoom(15);
         }, 100);
+        console.log(this.map.geocoder);
+        console.log('map mounted');
       });
     });
   }
+
+  onChange = e => {
+    const { journey } = this.state;
+    this.setState({
+      journey: {
+        ...journey,
+        [e.target.name]: e.target.value,
+      },
+    });
+  };
+
+  onSubmit = e => {
+    e.preventDefault();
+    const { journey } = this.state;
+    console.log(journey);
+    journeyService.createJourney(journey);
+    this.setState({
+      journey: {
+        originCoordinates: [],
+        originName: '',
+        destinationCoordinates: [],
+        destinationName: '',
+        time: '',
+      },
+      originPhase: true,
+      timePhase: false,
+    });
+  };
 
   render() {
     const mapStyle = {
@@ -120,18 +193,29 @@ class Mapbox extends Component {
       height: '500px',
     };
     const { user } = this.props;
+    const { originPhase, destinationPhase, timePhase } = this.state;
     return (
       <>
         <Navbar />
         <div id="map" style={mapStyle}></div>
-        <div className="input-wrapper" id="geocoder">
-          <p>Welcome, {user.username}! Please, introduce your current location!</p>
+        <div>
+          <p>Welcome, {user.username}!</p>
+          {originPhase && <p>Where do you want to start your journey?</p>}
+          {destinationPhase && <p>Where do you want to go?</p>}
+          {timePhase && (
+            <form onSubmit={this.onSubmit}>
+              <label>At which time?</label>
+              <input type="time" name="time" onChange={this.onChange} />
+              <input type="submit" />
+            </form>
+          )}
         </div>
-        <div className="btn-new-journey-container">
+        {!timePhase && <div className="input-wrapper" id="geocoder"></div>}
+        {/* <div className="btn-new-journey-container">
           <Link to="/journeys">
             <button className="btn btn-new-journey">Create a new Journey!</button>
           </Link>
-        </div>
+        </div> */}
       </>
     );
   }
