@@ -10,10 +10,19 @@ class Signup extends Component {
     username: '',
     password: '',
     confirmPassword: '',
+    invalidPassword: false,
+    passwordDontMatch: false,
   };
 
   handleChange = event => {
     const { name, value } = event.target;
+    const regexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?!.*[&%$]).{6,}$/;
+    if (name === 'password' && !regexp.test(value)) {
+      console.log(regexp.test(value));
+      this.setState({ invalidPassword: true });
+    } else if (name === 'password' && regexp.test(value)) {
+      this.setState({ invalidPassword: false });
+    }
     this.setState({ [name]: value });
   };
 
@@ -21,17 +30,22 @@ class Signup extends Component {
     e.preventDefault();
     const { username, password, confirmPassword } = this.state;
     if (password === confirmPassword) {
+      this.setState({
+        passwordDontMatch: false,
+      });
       this.props.handleSignup({
         username,
         password,
       });
     } else {
-      alert('Passwords does not match');
+      this.setState({
+        passwordDontMatch: true,
+      });
     }
   };
 
   render() {
-    const { username, password, confirmPassword } = this.state;
+    const { username, password, confirmPassword, invalidPassword, passwordDontMatch } = this.state;
     return (
       <div className="background">
         <div className="container">
@@ -49,7 +63,7 @@ class Signup extends Component {
                 required
                 autoComplete="off"
               />
-              <label>Username</label>
+              <label className="input-label">Username</label>
               <div className="indicator"></div>
             </div>
             <div className="input-wrapper">
@@ -62,7 +76,12 @@ class Signup extends Component {
                 required
                 autoComplete="off"
               />
-              <label>Password</label>
+              <label className="input-label">Password</label>
+              {invalidPassword && (
+                <p className="invalid-password">
+                  Password must contain at least 6 characters<br></br>an Uppercase, a Lowercase and a Number!
+                </p>
+              )}
               <div className="indicator"></div>
             </div>
             <div className="input-wrapper">
@@ -75,11 +94,12 @@ class Signup extends Component {
                 required
                 autoComplete="off"
               />
-              <label>Repeat Password</label>
+              <label className="input-label">Repeat Password</label>
+              {passwordDontMatch && <p className="invalid-password">Passwords are not equal!</p>}
               <div className="indicator"></div>
             </div>
             <div className="button-wrapper">
-              <input className="btn" type="submit" />
+              <input className="btn" type="submit" disabled={invalidPassword} />
             </div>
           </form>
         </div>

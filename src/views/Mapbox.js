@@ -33,7 +33,7 @@ class Mapbox extends Component {
   componentDidMount() {
     const options = {
       enableHighAccuracy: true,
-      timeout: 5000,
+      timeout: 2000,
       maximumAge: 0,
     };
     navigator.geolocation.getCurrentPosition(
@@ -44,13 +44,17 @@ class Mapbox extends Component {
           initialLongitude: position.coords.longitude,
         });
       },
-      err => console.log(err),
+      err => {
+        console.log(err);
+        this.mountMap();
+      },
       options,
     );
   }
 
-  mountMap = (longitude = this.state.initialLongitude, latitude = this.state.latitude) => {
+  mountMap = (longitude = this.state.initialLongitude, latitude = this.state.initialLatitude) => {
     const { mapMounted } = this.state;
+    console.log(longitude, latitude);
 
     if (mapMounted) {
       this.map.flyTo({
@@ -124,12 +128,7 @@ class Mapbox extends Component {
           .setPopup(
             addPopup(
               <>
-                <JourneyDetails
-                  id={journey._id}
-                  destinationLatitude={journey.startLocation.coordinates[1]}
-                  destinationLongitude={journey.startLocation.coordinates[0]}
-                  time={journey.time}
-                />
+                <JourneyDetails id={journey._id} name={journey.endLocation.name} time={journey.time} />
                 <button
                   onClick={() => {
                     push(`/journeys/${journey._id}`);
@@ -139,7 +138,12 @@ class Mapbox extends Component {
                 </button>
                 <button
                   onClick={() => {
-                    journeyService.deleteJourney(journey._id).then(res => console.log(res));
+                    journeyService.deleteJourney(journey._id).then(res => {
+                      console.log(res);
+                      this.map.flyTo({
+                        center: [longitude, latitude],
+                      });
+                    });
                   }}
                 >
                   delete
@@ -159,7 +163,7 @@ class Mapbox extends Component {
           journey: {
             ...journey,
             originCoordinates: response.result.geometry.coordinates,
-            originName: response.result.text,
+            originName: response.result.place_name,
           },
           originPhase: false,
           destinationPhase: true,
@@ -174,7 +178,6 @@ class Mapbox extends Component {
           destinationPhase: false,
           timePhase: true,
         });
-        this.map.geocoder.clear();
       }
     });
 

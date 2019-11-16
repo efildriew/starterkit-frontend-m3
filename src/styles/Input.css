@@ -37,7 +37,7 @@
   outline: none;
 }
 
-.input-wrapper label {
+.input-wrapper .input-label {
   color: #9e9e9e;
   font-size: 16px;
   left: 0;
@@ -47,12 +47,12 @@
   z-index: 0;
 }
 
-.input-wrapper .input-wrapper-input:focus + label {
+.input-wrapper .input-wrapper-input:focus + .input-label {
   color: #000;
   top: 0px;
 }
 
-.input-wrapper .input-wrapper-input + label + .indicator {
+.input-wrapper .input-wrapper-input + .input-label + .indicator {
   border-bottom: 2px solid #000;
   height: 0;
   position: absolute;
@@ -62,10 +62,15 @@
   z-index: 2;
 }
 
-.input-wrapper .input-wrapper-input:focus + label + .indicator {
+.input-wrapper .input-wrapper-input:focus + .input-label + .indicator {
   width: 100%;
 }
 
-.input-wrapper .input-wrapper-input:valid + label {
+.input-wrapper .input-wrapper-input:valid + .input-label {
   top: 0px;
+}
+
+.invalid-password {
+  color: red;
+  font-size: 10px;
 }

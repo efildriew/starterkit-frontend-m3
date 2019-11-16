@@ -10,9 +10,7 @@ class JourneyDetails extends Component {
         <p>
           <strong>This journey goes to:</strong>
         </p>
-        <p>
-          {this.props.destinationLatitude}, {this.props.destinationLongitude}
-        </p>
+        <p>{this.props.name}</p>
         <p>
           <strong>And departs at:</strong>
         </p>

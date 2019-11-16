@@ -10,7 +10,6 @@ import PrivateRoute from './components/PrivateRoute';
 
 import Home from './views/Home';
 import Mapbox from './views/Mapbox';
-import NewJourney from './components/NewJourney';
 import UpdateJourney from './components/UpdateJourney';
 
 class App extends Component {
@@ -23,7 +22,6 @@ class App extends Component {
           <AnonRoute exact path="/login" component={Login} />
           <AnonRoute exact path="/signup" component={Signup} />
           <PrivateRoute exact path="/map" component={Mapbox} />
-          <PrivateRoute exact path="/journeys" component={NewJourney} />
           <PrivateRoute exact path="/journeys/:id" component={UpdateJourney} />
         </Router>
       </>

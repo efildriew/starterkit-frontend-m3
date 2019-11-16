@@ -1,3 +1,5 @@
+import mapboxgl from 'mapbox-gl';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import React, { Component } from 'react';
 import { withAuth } from '../Context/AuthContext';
 
@@ -7,15 +9,18 @@ import '../styles/Button.css';
 import '../styles/Input.css';
 import '../styles/Login.css';
 
-class NewJourney extends Component {
+class UpdateJourney extends Component {
   state = {
-    body: {
-      originLatitude: 0,
-      originLongitude: 0,
-      destinationLatitude: 0,
-      destinationLongitude: 0,
-      time: 0,
+    journey: {
+      originCoordinates: [],
+      originName: '',
+      destinationCoordinates: [],
+      destinationName: '',
+      time: '',
     },
+    originPhase: false,
+    destinationPhase: false,
+    timePhase: false,
   };
 
   componentDidMount() {
@@ -24,22 +29,69 @@ class NewJourney extends Component {
     journeyService.getJourney(this.props.match.params.id).then(response => {
       console.log(response);
       this.setState({
-        body: {
-          originLatitude: response.journey.originLatitude,
-          originLongitude: response.journey.originLongitude,
-          destinationLatitude: response.journey.destinationLatitude,
-          destinationLongitude: response.journey.destinationLongitude,
+        journey: {
+          originCoordinates: response.journey.startLocation.coordinates,
+          originName: response.journey.startLocation.name,
+          destinationCoordinates: response.journey.endLocation.coordinates,
+          destinationName: response.journey.endLocation.name,
           time: response.journey.time,
         },
       });
+      this.mountMap();
     });
   }
 
+  mountMap = () => {
+    const { journey, originPhase, destinationPhase } = this.state;
+    console.log(journey.originCoordinates);
+    mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
+
+    this.map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [journey.originCoordinates[1], journey.originCoordinates[0]],
+      zoom: 14,
+    });
+
+    this.map.geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      marker: {
+        color: 'limegreen',
+      },
+      mapboxgl,
+    });
+
+    document.getElementById('geocoder').appendChild(this.map.geocoder.onAdd(this.map));
+
+    this.map.geocoder.on('result', response => {
+      console.log(response);
+      if (originPhase) {
+        console.log('pasas por el setstate de origen?');
+        this.setState({
+          journey: {
+            ...journey,
+            originCoordinates: response.result.geometry.coordinates,
+            originName: response.result.place_name,
+          },
+        });
+      } else {
+        console.log('pasas por el setstate de destino?');
+        this.setState({
+          journey: {
+            ...journey,
+            destinationCoordinates: response.result.geometry.coordinates,
+            destinationName: response.result.text,
+          },
+        });
+      }
+    });
+  };
+
   onChange = e => {
-    const { body } = this.state;
+    const { journey } = this.state;
     this.setState({
-      body: {
-        ...body,
+      journey: {
+        ...journey,
         [e.target.name]: e.target.value,
       },
     });
@@ -47,87 +99,72 @@ class NewJourney extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { body } = this.state;
-    console.log(body);
+    const { journey } = this.state;
+    console.log(journey);
     const {
       history: { push },
     } = this.props;
-    journeyService.updateJourney(body, this.props.match.params.id).then(push('/map'));
+    journeyService.updateJourney(journey, this.props.match.params.id).then(push('/map'));
+  };
+
+  handleOriginPhase = () => {
+    this.setState({
+      originPhase: true,
+      destinationPhase: false,
+      timePhase: false,
+    });
+  };
+
+  handleDestinationPhase = () => {
+    this.setState({
+      originPhase: false,
+      destinationPhase: true,
+      timePhase: false,
+    });
+  };
+
+  handleTimePhase = () => {
+    this.setState({
+      originPhase: false,
+      destinationPhase: false,
+      timePhase: true,
+    });
   };
 
   render() {
-    console.log(this.props);
-    const { originLatitude, originLongitude, destinationLatitude, destinationLongitude, time } = this.state.body;
+    const mapStyle = {
+      width: '100%',
+      height: '200px',
+    };
+    const { originPhase, destinationPhase, timePhase } = this.state;
     return (
-      <div className="background">
-        <div className="container">
-          <div className="input-box">
-            <h4>Where are you?</h4>
-          </div>
-          <form onSubmit={this.onSubmit}>
-            <div className="input-wrapper">
-              <input
-                type="number"
-                className="input-wrapper-input"
-                name="originLatitude"
-                value={originLatitude}
-                onChange={this.onChange}
-              />
-              <label>Origin Latitude</label>
-              <div className="indicator"></div>
-            </div>
-            <div className="input-wrapper">
-              <input
-                type="number"
-                className="input-wrapper-input"
-                name="originLongitude"
-                value={originLongitude}
-                onChange={this.onChange}
-              />
-              <label>Origin Longitude</label>
-              <div className="indicator"></div>
-            </div>
-            <div className="input-box">
-              <h4>Where do you want to go?</h4>
-            </div>
-            <div className="input-wrapper">
-              <input
-                type="number"
-                className="input-wrapper-input"
-                name="destinationLatitude"
-                value={destinationLatitude}
-                onChange={this.onChange}
-              />
-              <label>Destination Latitude</label>
-              <div className="indicator"></div>
-            </div>
-            <div className="input-wrapper">
-              <input
-                type="number"
-                className="input-wrapper-input"
-                name="destinationLongitude"
-                value={destinationLongitude}
-                onChange={this.onChange}
-              />
-              <label>Destination Longitude</label>
-              <div className="indicator"></div>
-            </div>
-            <div className="input-box">
-              <h4>At what time?</h4>
-            </div>
-            <div className="input-wrapper">
-              <input type="number" className="input-wrapper-input" name="time" value={time} onChange={this.onChange} />
-              <label>Time</label>
-              <div className="indicator"></div>
-            </div>
-            <div className="button-wrapper">
-              <input className="btn" type="submit" value="Update!" />
-            </div>
-          </form>
+      <>
+        <div>
+          <p>What do you want to change?</p>
+          <button name="origin" onClick={this.handleOriginPhase}>
+            Origin
+          </button>
+          <button name="destination" onClick={this.handleDestinationPhase}>
+            Destination
+          </button>
+          <button name="time" onClick={this.handleTimePhase}>
+            Time
+          </button>
         </div>
-      </div>
+        <div id="map" style={mapStyle} className={`${originPhase || destinationPhase ? 'show' : 'hidden'}`}></div>
+        <div id="geocoder" className={`input-wrapper ${originPhase || destinationPhase ? 'show' : 'hidden'}`}></div>
+        <form onSubmit={this.onSubmit}>
+          {timePhase && (
+            <>
+              <label>Which is the new time?</label>
+              <input type="time" name="time" onChange={this.onChange} />
+            </>
+          )}
+          <input type="submit" style={{ marginTop: `${50}px` }} />
+        </form>
+      </>
     );
   }
 }
 
-export default withAuth(NewJourney);
+export default withAuth(UpdateJourney);
