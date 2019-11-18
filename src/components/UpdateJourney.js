@@ -8,6 +8,7 @@ import journeyService from '../services/journeyService';
 import '../styles/Button.css';
 import '../styles/Input.css';
 import '../styles/Login.css';
+import '../styles/UpdateJourney.css';
 
 class UpdateJourney extends Component {
   state = {
@@ -146,15 +147,17 @@ class UpdateJourney extends Component {
     const { originPhase, destinationPhase, timePhase } = this.state;
     return (
       <>
-        <div>
+        <div className="center">
           <p>What do you want to change?</p>
-          <button name="origin" onClick={this.handleOriginPhase}>
+        </div>
+        <div className="center">
+          <button className="btn" name="origin" onClick={this.handleOriginPhase}>
             Origin
           </button>
-          <button name="destination" onClick={this.handleDestinationPhase}>
+          <button className="btn" name="destination" onClick={this.handleDestinationPhase}>
             Destination
           </button>
-          <button name="time" onClick={this.handleTimePhase}>
+          <button className="btn" name="time" onClick={this.handleTimePhase}>
             Time
           </button>
         </div>
@@ -163,11 +166,11 @@ class UpdateJourney extends Component {
         <form onSubmit={this.onSubmit}>
           {timePhase && (
             <>
-              <label>Which is the new time?</label>
+              <label>Set the new time!</label>
               <input type="time" name="time" onChange={this.onChange} />
             </>
           )}
-          <input type="submit" style={{ marginTop: `${50}px` }} />
+          <input className="btn submit" type="submit" style={{ marginTop: `${50}px` }} />
         </form>
       </>
     );

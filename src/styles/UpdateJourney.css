@@ -1,0 +1,70 @@
+.btn {
+  min-width: 30%;
+  margin: 1%;
+}
+
+form {
+  margin: 10%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+form label {
+  margin: 3% auto;
+}
+
+.submit {
+  display: block;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  margin: 2%;
+}
+
+input[type='time'] {
+  border: none;
+  color: #2a2c2d;
+  font-size: 14px;
+  font-family: helvetica;
+  width: 160px;
+  margin: 3% auto;
+}
+
+input[type='time']::-webkit-datetime-edit-fields-wrapper {
+  display: flex;
+}
+
+input[type='time']::-webkit-datetime-edit-text {
+  padding: 19px 4px;
+}
+
+input[type='time']::-webkit-datetime-edit-hour-field {
+  background-color: #f2f4f5;
+  border-radius: 15%;
+  padding: 19px 13px;
+}
+
+input[type='time']::-webkit-datetime-edit-minute-field {
+  background-color: #f2f4f5;
+  border-radius: 15%;
+  padding: 19px 13px;
+}
+
+input[type='time']::-webkit-datetime-edit-ampm-field {
+  background-color: #7155d3;
+  border-radius: 15%;
+  color: #fff;
+  padding: 19px 13px;
+}
+
+input[type='time']::-webkit-clear-button {
+  display: none;
+}
+
+/* Up/Down arrows for incrementing/decrementing the value */
+input[type='time']::-webkit-inner-spin-button {
+  display: none;
+}

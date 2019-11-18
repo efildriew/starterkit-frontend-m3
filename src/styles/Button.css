@@ -78,3 +78,12 @@
   transform: translate(-50%, -50%) scale(0);
   transition: transform 0s;
 }
+
+.update-btn {
+  background-color: skyblue;
+  color: black;
+}
+
+.delete-btn {
+  background-color: red;
+}

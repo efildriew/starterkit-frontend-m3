@@ -10,3 +10,9 @@
 .hidden {
   display: none;
 }
+
+.user-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

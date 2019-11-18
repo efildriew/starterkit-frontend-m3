@@ -79,6 +79,8 @@ class Mapbox extends Component {
               <>
                 <JourneyDetails id={journey._id} name={journey.endLocation.name} time={journey.time} />
                 <button
+                  className="btn update-btn"
+                  style={{ 'min-width': `${2}%` }}
                   onClick={() => {
                     push(`/journeys/${journey._id}`);
                   }}
@@ -86,6 +88,8 @@ class Mapbox extends Component {
                   update
                 </button>
                 <button
+                  className="btn delete-btn"
+                  style={{ 'min-width': `${2}%` }}
                   onClick={() => {
                     journeyService.deleteJourney(journey._id).then(res => {
                       console.log(res);
@@ -111,7 +115,7 @@ class Mapbox extends Component {
     console.log('this.map, before', this.map);
     if (this.map && mapMounted) {
       this.map.flyTo({
-        center: [latitude, longitude],
+        center: [longitude, latitude],
       });
       this.setPopupForNewJournies();
       return;
@@ -240,6 +244,9 @@ class Mapbox extends Component {
     });
 
     this.map.on('load', () => {
+      if (mapMounted) {
+        return;
+      }
       geolocate.trigger();
       setTimeout(() => {
         this.map.setZoom(15);
@@ -301,7 +308,7 @@ class Mapbox extends Component {
       <>
         <Navbar />
         <div id="map" style={mapStyle}></div>
-        <div>
+        <div className="user-nav">
           <p>Welcome, {user.username}!</p>
           {originPhase && <p>Where do you want to start your journey?</p>}
           {destinationPhase && <p>Where do you want to go?</p>}
@@ -309,7 +316,7 @@ class Mapbox extends Component {
             <form onSubmit={this.onSubmit}>
               <label>At which time?</label>
               <input type="time" name="time" onChange={this.onChange} />
-              <input type="submit" />
+              <input className="btn submit" type="submit" />
             </form>
           )}
         </div>
