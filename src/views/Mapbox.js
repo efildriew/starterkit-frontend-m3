@@ -107,10 +107,11 @@ class Mapbox extends Component {
 
   mountMap = (longitude = this.state.initialLongitude, latitude = this.state.initialLatitude) => {
     console.log(longitude, latitude);
+    const { mapMounted } = this.state;
     console.log('this.map, before', this.map);
-    if (this.map) {
+    if (this.map && mapMounted) {
       this.map.flyTo({
-        center: [longitude, latitude],
+        center: [latitude, longitude],
       });
       this.setPopupForNewJournies();
       return;
