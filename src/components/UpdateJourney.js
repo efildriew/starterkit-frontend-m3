@@ -55,7 +55,7 @@ class UpdateJourney extends Component {
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11',
-      center: [journey.originCoordinates[1], journey.originCoordinates[0]],
+      center: [journey.originCoordinates[0], journey.originCoordinates[1]],
       zoom: 14,
     });
 

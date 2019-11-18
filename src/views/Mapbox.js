@@ -30,6 +30,8 @@ class Mapbox extends Component {
     mapMounted: false,
   };
 
+  map = undefined;
+
   componentDidMount() {
     const options = {
       enableHighAccuracy: true,
@@ -52,14 +54,65 @@ class Mapbox extends Component {
     );
   }
 
-  mountMap = (longitude = this.state.initialLongitude, latitude = this.state.initialLatitude) => {
-    const { mapMounted } = this.state;
-    console.log(longitude, latitude);
+  setPopupForNewJournies = () => {
+    const addPopup = reactElement => {
+      const placeholder = document.createElement('div');
+      ReactDOM.render(reactElement, placeholder);
+      const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(placeholder);
+      return popup;
+    };
 
-    if (mapMounted) {
+    journeyService.getAllJourneys().then(response => {
+      const {
+        history: { push },
+      } = this.props;
+      const { initialLongitude, initialLatitude } = this.state;
+      response.journeys.forEach(journey => {
+        console.log(journey);
+        const element = document.createElement('div');
+        element.className = 'marker';
+
+        new mapboxgl.Marker(element)
+          .setLngLat([journey.startLocation.coordinates[1], journey.startLocation.coordinates[0]])
+          .setPopup(
+            addPopup(
+              <>
+                <JourneyDetails id={journey._id} name={journey.endLocation.name} time={journey.time} />
+                <button
+                  onClick={() => {
+                    push(`/journeys/${journey._id}`);
+                  }}
+                >
+                  update
+                </button>
+                <button
+                  onClick={() => {
+                    journeyService.deleteJourney(journey._id).then(res => {
+                      console.log(res);
+                      this.map.flyTo({
+                        center: [initialLongitude, initialLatitude],
+                      });
+                    });
+                  }}
+                >
+                  delete
+                </button>
+              </>,
+            ),
+          )
+          .addTo(this.map);
+      });
+    });
+  };
+
+  mountMap = (longitude = this.state.initialLongitude, latitude = this.state.initialLatitude) => {
+    console.log(longitude, latitude);
+    console.log('this.map, before', this.map);
+    if (this.map) {
       this.map.flyTo({
         center: [longitude, latitude],
       });
+      this.setPopupForNewJournies();
       return;
     }
 
@@ -75,6 +128,8 @@ class Mapbox extends Component {
       center: [longitude, latitude],
       zoom: 15,
     });
+
+    console.log('this.map, after', this.map);
 
     this.setState({
       journey: {
@@ -107,53 +162,55 @@ class Mapbox extends Component {
 
     document.getElementById('geocoder').appendChild(this.map.geocoder.onAdd(this.map));
 
-    const addPopup = reactElement => {
-      const placeholder = document.createElement('div');
-      ReactDOM.render(reactElement, placeholder);
-      const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(placeholder);
-      return popup;
-    };
+    this.setPopupForNewJournies();
 
-    journeyService.getAllJourneys().then(response => {
-      const {
-        history: { push },
-      } = this.props;
-      response.journeys.forEach(journey => {
-        console.log(journey);
-        const element = document.createElement('div');
-        element.className = 'marker';
+    // const addPopup = reactElement => {
+    //   const placeholder = document.createElement('div');
+    //   ReactDOM.render(reactElement, placeholder);
+    //   const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(placeholder);
+    //   return popup;
+    // };
 
-        new mapboxgl.Marker(element)
-          .setLngLat([journey.startLocation.coordinates[1], journey.startLocation.coordinates[0]])
-          .setPopup(
-            addPopup(
-              <>
-                <JourneyDetails id={journey._id} name={journey.endLocation.name} time={journey.time} />
-                <button
-                  onClick={() => {
-                    push(`/journeys/${journey._id}`);
-                  }}
-                >
-                  update
-                </button>
-                <button
-                  onClick={() => {
-                    journeyService.deleteJourney(journey._id).then(res => {
-                      console.log(res);
-                      this.map.flyTo({
-                        center: [longitude, latitude],
-                      });
-                    });
-                  }}
-                >
-                  delete
-                </button>
-              </>,
-            ),
-          )
-          .addTo(this.map);
-      });
-    });
+    // journeyService.getAllJourneys().then(response => {
+    //   const {
+    //     history: { push },
+    //   } = this.props;
+    //   response.journeys.forEach(journey => {
+    //     console.log(journey);
+    //     const element = document.createElement('div');
+    //     element.className = 'marker';
+
+    //     new mapboxgl.Marker(element)
+    //       .setLngLat([journey.startLocation.coordinates[1], journey.startLocation.coordinates[0]])
+    //       .setPopup(
+    //         addPopup(
+    //           <>
+    //             <JourneyDetails id={journey._id} name={journey.endLocation.name} time={journey.time} />
+    //             <button
+    //               onClick={() => {
+    //                 push(`/journeys/${journey._id}`);
+    //               }}
+    //             >
+    //               update
+    //             </button>
+    //             <button
+    //               onClick={() => {
+    //                 journeyService.deleteJourney(journey._id).then(res => {
+    //                   console.log(res);
+    //                   this.map.flyTo({
+    //                     center: [longitude, latitude],
+    //                   });
+    //                 });
+    //               }}
+    //             >
+    //               delete
+    //             </button>
+    //           </>,
+    //         ),
+    //       )
+    //       .addTo(this.map);
+    //   });
+    // });
 
     this.map.geocoder.on('result', response => {
       console.log(response);
@@ -206,7 +263,7 @@ class Mapbox extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { journey, initialLatitude, initialLongitude } = this.state;
+    const { journey } = this.state;
     console.log(journey);
     journeyService.createJourney(journey);
     this.setState({
@@ -220,10 +277,19 @@ class Mapbox extends Component {
       originPhase: true,
       timePhase: false,
     });
-    this.mountMap(initialLongitude, initialLatitude);
+    this.setPopupForNewJournies();
+    this.map.flyTo({
+      center: [this.state.initialLongitude, this.state.initialLatitude],
+    });
   };
 
+  componentDidUpdate() {
+    console.log('componentdidupdate');
+    this.setPopupForNewJournies();
+  }
+
   render() {
+    console.log('this.map render', this.map);
     const mapStyle = {
       width: '100%',
       height: '500px',
