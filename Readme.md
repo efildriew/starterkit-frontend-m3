@@ -8,10 +8,6 @@ App that allows you to share a cab/uber/cabify to a destination with people arou
 
 ## User Stories
 
-**404** - As a user I want to see a nice 404 page when I go to a page that doesn’t exist so that I know it was my fault
-
-**500** - As a user I want to see a nice error page when the super team screws it up so that I know that is not my fault
-
 **Homepage** - As a user I want to be able to access the homepage so that I see what the app is about and login and signup
 
 **Sign up** - As a user I want to sign up on the webpage so that I can share my journey with others
@@ -34,7 +30,7 @@ App that allows you to share a cab/uber/cabify to a destination with people arou
 
 ## Backlog
 
-List of other features outside of the MVPs scope
+List of other features outside of the MVPs scop:
 
 Payment options: be able to set up Paypal/credit card account for my part of the journey to be charged
 
@@ -54,29 +50,25 @@ Frontend:
 
 '/logout': logout page, where user will be asked if he's sure to leave
 
-'/:id/profile': profile page when user can see/edit their profile
-
 '/main': map page where user can choose destination
 
 '/journeys': journeys list, where user will be able to see journeys around him
 
-'/journey/detail': a single journey detail
+'/journey/:id': edit a journey
 
 Backend:
 
-POST '/api/login': login
+POST '/login': login
 
-POST '/api/signup': signup
+POST '/signup': signup
 
-GET '/api/logout': deletes auth
+GET '/logout': deletes auth
 
-GET/POST '/api/:id/profile': profile page when user can see/edit their profile
+GET/POST '/:id/profile': profile page when user can see/edit their profile
 
-GET '/api/main': show journeys available on map
+GET/POST '/api/journeys': journeys list, where user will be able to see journeys around him on the map
 
-GET/POST '/api/journeys': journeys list, where user will be able to see journeys around him
-
-GET '/api/journey/detail': a single journey detail
+GET '/journey/:id': a single journey detail, whic could be updated
 
 ## Models
 
@@ -85,35 +77,52 @@ User model
     {
     	username: String
     	password: String
-    name: String
-    avatar: Picture/url
-    interests: Array
-    favourite places: Array
+        name: String
+        avatar: Picture/url
+        interests: Array
+        favourite places: Array
     }
 
 Journey model
 
     {
     	owner: ObjectId<User>
+    	startLocation: Point
+            Coordinates: Array
+    	endLocation: Point
+            Coordinates: Array
     	name: String
-    	destination: Coordinates
-    	date: Date
-    	location: Coordinates
-    	users: ObjectId<User>
+    	time: String
+    	users: Array
     }
 
 ## Links
 
 ### Git
 
-The url to your repository and to your deployed project
+https://github.com/efildriew/starterkit-frontend-m3
 
-[Repository Frontend Link](http://github.com/)
+https://github.com/efildriew/starterkit-backend-m3
 
-[Repository Backend Link](http://github.com/)
+### Deploy
 
-[Deploy Link](http://heroku.com/)
+https://trusting-swirles-8b5b7f.netlify.com/
+
+https://share-cab.herokuapp.com/
 
 ### Slides
 
-[Slides Link](http://slides.com/)
+https://slides.com/marcvalles/sharecab
+
+## Instructions of use
+
+Once pressed the start button, you will be redirect to Login. You can Login with:
+
+user: ironhack
+password: Ironhack2019 (notice the I uppercase)
+
+You can create a user pressing on the sign button. Password must contain a minimum of six letters, wich should be minimum an uppercase, a lowercase and a number.
+
+On the main page, you will see the map. The app will geolocate automatically, so you need to allow geoloc on the browser (there are default coordinates setted up in case geoloc doesn't work).
+
+There's a search bar wich allow you to set a location to start a Journey. After setting one up, you will be required to select a destination, using the same search bar. After destination is setted, a timer will appear so you can set the time at which the journey will depart. Once it's complete, 
