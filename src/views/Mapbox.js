@@ -1,9 +1,7 @@
 import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-// import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-// import { Router } from 'react-router-dom';
 
 import JourneyDetails from './JourneyDetails';
 import journeyService from '../services/journeyService';
@@ -68,7 +66,6 @@ class Mapbox extends Component {
       } = this.props;
       const { initialLongitude, initialLatitude } = this.state;
       response.journeys.forEach(journey => {
-        console.log(journey);
         const element = document.createElement('div');
         element.className = 'marker';
 
@@ -92,7 +89,6 @@ class Mapbox extends Component {
                   style={{ 'min-width': `${2}%` }}
                   onClick={() => {
                     journeyService.deleteJourney(journey._id).then(res => {
-                      console.log(res);
                       this.map.flyTo({
                         center: [initialLongitude, initialLatitude],
                       });
@@ -110,9 +106,7 @@ class Mapbox extends Component {
   };
 
   mountMap = (longitude = this.state.initialLongitude, latitude = this.state.initialLatitude) => {
-    console.log(longitude, latitude);
     const { mapMounted } = this.state;
-    console.log('this.map, before', this.map);
     if (this.map && mapMounted) {
       this.map.flyTo({
         center: [longitude, latitude],
@@ -121,11 +115,7 @@ class Mapbox extends Component {
       return;
     }
 
-    console.log('map being mounted');
-
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
-
-    console.log('fetching user location and creating map');
 
     this.map = new mapboxgl.Map({
       container: 'map',
@@ -134,15 +124,11 @@ class Mapbox extends Component {
       zoom: 15,
     });
 
-    console.log('this.map, after', this.map);
-
     this.setState({
       journey: {
         originCoordinates: [latitude, longitude],
       },
     });
-
-    console.log('got location and map, creating geolocatecontrol');
 
     const geolocate = new mapboxgl.GeolocateControl({
       positionOptions: {
@@ -153,8 +139,6 @@ class Mapbox extends Component {
 
     this.map.addControl(geolocate);
 
-    console.log('got geolocatecontrol, creating geocoder');
-
     this.map.geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
       marker: {
@@ -163,62 +147,11 @@ class Mapbox extends Component {
       mapboxgl,
     });
 
-    console.log('map created, fetching data');
-
     document.getElementById('geocoder').appendChild(this.map.geocoder.onAdd(this.map));
 
     this.setPopupForNewJournies();
 
-    // const addPopup = reactElement => {
-    //   const placeholder = document.createElement('div');
-    //   ReactDOM.render(reactElement, placeholder);
-    //   const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(placeholder);
-    //   return popup;
-    // };
-
-    // journeyService.getAllJourneys().then(response => {
-    //   const {
-    //     history: { push },
-    //   } = this.props;
-    //   response.journeys.forEach(journey => {
-    //     console.log(journey);
-    //     const element = document.createElement('div');
-    //     element.className = 'marker';
-
-    //     new mapboxgl.Marker(element)
-    //       .setLngLat([journey.startLocation.coordinates[1], journey.startLocation.coordinates[0]])
-    //       .setPopup(
-    //         addPopup(
-    //           <>
-    //             <JourneyDetails id={journey._id} name={journey.endLocation.name} time={journey.time} />
-    //             <button
-    //               onClick={() => {
-    //                 push(`/journeys/${journey._id}`);
-    //               }}
-    //             >
-    //               update
-    //             </button>
-    //             <button
-    //               onClick={() => {
-    //                 journeyService.deleteJourney(journey._id).then(res => {
-    //                   console.log(res);
-    //                   this.map.flyTo({
-    //                     center: [longitude, latitude],
-    //                   });
-    //                 });
-    //               }}
-    //             >
-    //               delete
-    //             </button>
-    //           </>,
-    //         ),
-    //       )
-    //       .addTo(this.map);
-    //   });
-    // });
-
     this.map.geocoder.on('result', response => {
-      console.log(response);
       const { journey, originPhase, destinationPhase } = this.state;
       if (originPhase) {
         this.setState({
@@ -254,8 +187,6 @@ class Mapbox extends Component {
       this.setState({
         mapMounted: true,
       });
-      console.log(this.map.geocoder);
-      console.log('map mounted');
     });
   };
 
@@ -272,7 +203,6 @@ class Mapbox extends Component {
   onSubmit = e => {
     e.preventDefault();
     const { journey } = this.state;
-    console.log(journey);
     journeyService.createJourney(journey);
     this.setState({
       journey: {
@@ -292,12 +222,10 @@ class Mapbox extends Component {
   };
 
   componentDidUpdate() {
-    console.log('componentdidupdate');
     this.setPopupForNewJournies();
   }
 
   render() {
-    console.log('this.map render', this.map);
     const mapStyle = {
       width: '100%',
       height: '500px',
@@ -321,12 +249,6 @@ class Mapbox extends Component {
           )}
         </div>
         <div id="geocoder" className={`input-wrapper ${!timePhase ? 'show' : 'hidden'}`}></div>
-        {/* {!timePhase && <div className="input-wrapper" id="geocoder"></div>} */}
-        {/* <div className="btn-new-journey-container">
-          <Link to="/journeys">
-            <button className="btn btn-new-journey">Create a new Journey!</button>
-          </Link>
-        </div> */}
       </>
     );
   }

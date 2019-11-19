@@ -25,8 +25,6 @@ class UpdateJourney extends Component {
   };
 
   componentDidMount() {
-    console.log(this.props.match.params.id);
-    console.log(this.props);
     journeyService.getJourney(this.props.match.params.id).then(response => {
       console.log(response);
       this.setState({
@@ -50,7 +48,6 @@ class UpdateJourney extends Component {
 
   mountMap = () => {
     const { journey } = this.state;
-    console.log(journey.originCoordinates);
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
     this.map = new mapboxgl.Map({
@@ -72,9 +69,7 @@ class UpdateJourney extends Component {
 
     this.map.geocoder.on('result', response => {
       const { originPhase, destinationPhase } = this.state;
-      console.log(response);
       if (originPhase) {
-        console.log('pasas por el setstate de origen?');
         this.setState({
           journey: {
             ...journey,
@@ -83,7 +78,6 @@ class UpdateJourney extends Component {
           },
         });
       } else if (destinationPhase) {
-        console.log('pasas por el setstate de destino?');
         this.setState({
           journey: {
             ...journey,
@@ -108,7 +102,6 @@ class UpdateJourney extends Component {
   onSubmit = e => {
     e.preventDefault();
     const { journey } = this.state;
-    console.log(journey);
     const {
       history: { push },
     } = this.props;

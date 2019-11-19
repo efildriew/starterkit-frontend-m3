@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+
+import { Link } from 'react-router-dom';
 import { withAuth } from '../../Context/AuthContext';
 
 import '../../styles/Login.css';
@@ -16,7 +18,6 @@ class Login extends Component {
     const { name, value } = event.target;
     const regexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?!.*[&%$]).{6,}$/;
     if (name === 'password' && !regexp.test(value)) {
-      console.log(regexp.test(value));
       this.setState({ invalidPassword: true });
     } else if (name === 'password' && regexp.test(value)) {
       this.setState({ invalidPassword: false });
@@ -77,6 +78,12 @@ class Login extends Component {
               <input className="btn" type="submit" disabled={invalidPassword} />
             </div>
           </form>
+          <div className="login-signup">
+            <p>{"Don't have an account?"}</p>
+            <Link to={'/signup'}>
+              <button className="btn">Sign Up!</button>
+            </Link>
+          </div>
         </div>
       </div>
     );

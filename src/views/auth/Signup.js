@@ -18,7 +18,6 @@ class Signup extends Component {
     const { name, value } = event.target;
     const regexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?!.*[&%$]).{6,}$/;
     if (name === 'password' && !regexp.test(value)) {
-      console.log(regexp.test(value));
       this.setState({ invalidPassword: true });
     } else if (name === 'password' && regexp.test(value)) {
       this.setState({ invalidPassword: false });

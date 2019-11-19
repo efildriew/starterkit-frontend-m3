@@ -4,7 +4,6 @@ import '../styles/Button.css';
 
 class JourneyDetails extends Component {
   render() {
-    console.log(this.props);
     return (
       <div>
         <p>
