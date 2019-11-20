@@ -125,4 +125,8 @@ You can create a user pressing on the sign button. Password must contain a minim
 
 On the main page, you will see the map. The app will geolocate automatically, so you need to allow geoloc on the browser (there are default coordinates setted up in case geoloc doesn't work).
 
-There's a search bar wich allow you to set a location to start a Journey. After setting one up, you will be required to select a destination, using the same search bar. After destination is setted, a timer will appear so you can set the time at which the journey will depart. Once it's complete, 
+There's a search bar wich allow you to set a location to start a Journey. After setting one up, you will be required to select a destination, using the same search bar. After destination is setted, a timer will appear so you can set the time at which the journey will depart. Once it's complete, the map shows the new marker and return to the user location.
+
+If you click on a marker, you'll see two buttons, one for update the journey and one for delete. The delete button does just that. The update button will take you to another screen, where you can select the origin, the destination and the time. You have to select what do you want to update. On origin and destination, another map will appear when you can type your new origin or destination on the search bar, and press submit for it to be changed.
+
+To logout, press on the avatar and a slide menu will appear with the options Profile, Favourite places (both disabled) and logout, which once pressed will return to the login page.
